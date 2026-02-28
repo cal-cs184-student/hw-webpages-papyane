@@ -165,21 +165,35 @@
 		</div>
 		
 		<h2>Task 6: "Level Sampling" with mipmaps for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Explain level sampling in your own words and describe how you implemented it for texture mapping.
+		Level sampling, or mipmapping, is essentially a solution to the minification problem. When we have an object that is far away and if we sample one texel per pixel, we would skip over a lot of texture data which would cause the Moiré pattern and other jagginess. Through level sampling we can pre-compute blurred, lower resolution versions of the texture. We match the size of the texture to the distance of the object, so how much of the texture a single screen pixel covers. 
+		To implement this, we need to find the barycentric coordinates for points around (x,y), so (x+1, y) and (x, y+1), in order to see how fast the (u,v) coordinates change across one screen pixel, in both the x and y directions. Once we have those derivatives, to get the level of a pixel, we took the dx or dy vector which had the maximum length and ran it through log base 2. Then in the sample function, depending on the type of level sampling that is chosen by the user, we use the level value that we found in different ways. For L_ZERO, the level must be zero. For L_NEAREST, we found the level to the nearest integer. For L_LINEAR, we take the floor and ceiling of the level and linearly interpolate from the two adjacent levels. 
 
-		<h2>(Optional) Task 7: Extra Credit - Draw Something Creative!</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+		<p> In terms of speed, supersampling is the slowest of all three since it scales linearly depending on the size of the sample rate. The fastest method is definitely pixel sampling at the nearest level since it just requires 1 texel lookup, while bilinear requires four lookups as well as linear interpolation. Level sampling also gets slower when we consider nearest and linear, since they require derivatives and more linear interpolation. Memory usage is most effective when using pixel sampling since we do not need to story anything more than the base texture. Mipmapping requires 1/3rd more memory, but the worst is supersampling because it once again scales with the sample rate. Each technique has it’s own strengths. Despite the speed and memory usage because worse when considering supersampling, it is the best at fixing geometric aliasing like jagged edges. Mipmapping is best when we minimize an image and we want to retain quality without things like Moiré patterns. Pixel sampling is best with magnification as it will smooth blocky pixels into looking like gradients.</p>	
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part6_level0_linear" width="400px"/>
+				  <figcaption> checkerboard with level 0 mipmap and bilinear pixel sampling</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part6_level0_nearest" width="400px"/>
+				  <figcaption> checkerboard with level 0 mipmap and nearest pixel sampling</figcaption>
+				</td>
+			  </tr>
+				</tr>
+				<td style="text-align: center;">
+				  <img src="part6_levelnear_linear" width="400px"/>
+				  <figcaption> checkerboard with nearest mipmap and bilinear pixel sampling</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part6_levelnear_nearest" width="400px"/>
+				  <figcaption> checkerboard with nearest mipmap and nearest pixel sampling</figcaption>
+				</td>
+				</tr>
+			</table>
+		</div>
 		</div>
 	</body>
 </html>
