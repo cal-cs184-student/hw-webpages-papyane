@@ -28,7 +28,7 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 1 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Names: Elen Papyan </div>
 
 		<br>
 
@@ -52,8 +52,11 @@
 			In this homework, we created a very barebones renderer. We have given the user the ability to render both colored and textured images by working from the bottom up--points, lines, and triangles. In order for images to appear smoothly, we implement antialiasing techniques for the user to utilize as they wish.
 
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		To rasterize triangles, the simplest and most effective method is to sample pixels in the bounding box, so the smallest box that contains the triangle. The process of sampling the pixels is as such. We find the change in x and the change in y between each pair of points. This will help us when we construct the line equations 
+			for each pair of vertices. The line equation is just the pixel point we are sampling dot product with the normal vector of the line between the two points (the normal is perpendicular to the tangent, so we flip the coordinates and add a negative to the first coordinate). Now checking whether or not a pixel is in the triangle 
+			checks whether or not the three line equations are ALL greater than (or equal to) 0, or ALL less than (or equal to) 0. Checking both all greater and all less than accounts for the order that the triangles are passed in (counterclockwise or clockwise).
+		My algorithm is exactly the one that checks each sample without the bounding box of the triangle. 
+		Belowis an image of rasterized triangles. 
 		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
