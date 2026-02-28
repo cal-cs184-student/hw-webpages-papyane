@@ -116,8 +116,23 @@
 			</table>
 		</div>
 		<h2>Task 4: Barycentric coordinates</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		Barycentric coordinates represent a weighted average of given vertices. In our case, we have three vertices and when we represent a triangle with barycentric coordinates, we give a value to each pixel within the triangle that is based on a weighted average of the vertices. 
+			If each vertex represents a color, then the resulting pixel will have a color that is based on this weighted average of the vertex colors. As we can see in the triangle below with red, blue, green vertices, the pixels in the middle of the triangle end up with a gray-ish color 
+			that is representative of an even mix of red blue and green. If we move towards the green vertex, we can see the influence of red and blue decrease
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part4_triangle.png" width="400px"/>
+				  <figcaption> colored triangle</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part4_wheel.png" width="400px"/>
+				  <figcaption>color wheel</figcaption>
+				</td>
+			</table>
+		</div>
+			
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
