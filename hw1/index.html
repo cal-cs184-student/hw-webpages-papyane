@@ -1,4 +1,4 @@
-<html>
+ <html>
 	<head>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -56,28 +56,13 @@
 			for each pair of vertices. The line equation is just the pixel point we are sampling dot product with the normal vector of the line between the two points (the normal is perpendicular to the tangent, so we flip the coordinates and add a negative to the first coordinate). Now checking whether or not a pixel is in the triangle 
 			checks whether or not the three line equations are ALL greater than (or equal to) 0, or ALL less than (or equal to) 0. Checking both all greater and all less than accounts for the order that the triangles are passed in (counterclockwise or clockwise).
 		
-		My algorithm is exactly the one that checks each sample without the bounding box of the triangle. 
-		Below is an image of rasterized triangles. 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		My algorithm is exactly the one that checks each sample without the bounding box of the triangle.  
+		<p>Below is an image of rasterized triangles</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
+				  <img src="part1_interesting.png" width="400px"/>
 				  <figcaption>Caption goes here.</figcaption>
 				</td>
 			  </tr>
