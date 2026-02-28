@@ -62,16 +62,45 @@
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="part1_interesting.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="part_1_interesting.png" width="400px"/>
+				  <figcaption>Triangles!</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
 		
 		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		My algorithm uses the approach where we use sample buffer as a higher resolution grid based on the sample rate (width * height * sample rate). At the level of rasterizing the triangle, instead of immediately 
+			calling rasterize point, we put valid pixels (subsampled based on the sqrt of the sample rate) into a sample buffer that is the larger size above necessary to account for the subsampling occurring at every 
+			pixel. Then downsample in order to fill the target framebuffer by taking our “high resolution” sample buffer and averaging the subpixels of every pixel. To make sure that sample buffer changes dynamically, 
+			within set_sample_rate and set_framebuffer_target we make sure that the sample buffer is of the correct size, thus making it so that when the window is resized or the sampling rate is changed the code will 
+			dynamically update the space of the sample buffer. We also changed the fill pixel to add every subsampled point within the pixel into the sample buffer. Super sampling is useful because then we can create a 
+			low pass filter which removes the high frequency jagginess of objects. This effect close up will lead to a smoother look when zoomed out.  
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part2_1.png" width="400px"/>
+				  <figcaption> sample rate 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part2_4.png" width="400px"/>
+				  <figcaption> sample rate 4</figcaption>
+				</td>
+			  </tr>
+				</tr>
+				<td style="text-align: center;">
+				  <img src="part2_9.png" width="400px"/>
+				  <figcaption> sample rate 9</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part2_16.png" width="400px"/>
+				  <figcaption> sample rate 16</figcaption>
+				</td>
+				</tr>
+			</table>
+		</div>
+			
 		<h2>Task 3: Transforms</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
