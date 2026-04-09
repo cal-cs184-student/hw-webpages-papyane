@@ -88,8 +88,16 @@
 		</div>
 		
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		The BVH construction algorithm takes in a start, end, and max leaf size, where start and end are iterators with Primitives. It begins by initializing a bounding box and adding all the primitives from the 
+			given start to end into the bounding box. This box is the parent which will encompass all the objects in this branch of the tree. We keep track of the number of primitives to then check if the number is less than or greater than the max leaf size. If it's less than the max leaf size,
+			this bbox will be a leaf node. Otherwise, we have to recurse to create two child nodes where the number of primitives is split between the children. To do this, we find the splitting point along the longest axis, which helps with creating
+			child bounding boxes as tight as possible. 
+			The heuristic we use is averaging the centroid of all the primitives. We collect the sum of the centroids of every axis of a primitive in the loop earlier where we populated the initialized bbox, therefore making 
+			it unnecessary to loop again. Then we pick out the centroid sum of the longest axis and divide by the number of primitives to get our splitting point. Then using the built in partition function we split the primitives from 
+			start to end based on if it's centroid is less than or greater than the splitting point. This is object partitioning! We then check the size of the primitives from start to middle and middle to end to ensure that if a side is empty, we force a split 
+			by the index. Finally we are ready to recurse! By calling the construct_bvh function from start to mid and mid to end, we get the left and right child respectively. We create our interior node, setting the children to what we
+			got via recursion and returing that node.
+			
 		<h2>Part 3: Direct Illumination</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
