@@ -97,6 +97,31 @@
 			start to end based on if it's centroid is less than or greater than the splitting point. This is object partitioning! We then check the size of the primitives from start to middle and middle to end to ensure that if a side is empty, we force a split 
 			by the index. Finally we are ready to recurse! By calling the construct_bvh function from start to mid and mid to end, we get the left and right child respectively. We create our interior node, setting the children to what we
 			got via recursion and returing that node.
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBdragon.png" width="400px"/>
+				  <figcaption>Dragon (0.0324s w/ BVH, 201.0158s w/o BVH)</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBlucy.png" width="400px"/>
+				  <figcaption>Lucy (0.0279s w/ BVH, 263.470s w/o BVH)</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="" width="400px"/>
+				  <figcaption>Max Planck (0.0337s w/ BVH)</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="cow.png" width="400px"/>
+				  <figcaption>Cow (0.0293s w/ BVH, 8.128s w/o BVH)</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 			
 		<h2>Part 3: Direct Illumination</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
