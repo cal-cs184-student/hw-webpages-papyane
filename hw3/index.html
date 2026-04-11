@@ -48,17 +48,17 @@
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
-		Ray Generation: We begin with a pixel coordinate in the image space then normalize it to be in the range [0,1]x[0,1]. Then within "generate_ray," we 
+		<p>Ray Generation: We begin with a pixel coordinate in the image space then normalize it to be in the range [0,1]x[0,1]. Then within "generate_ray," we 
 			shift the points in order to place them in the center of the Field of View, before we scale them according to the field of view. Then using the camera to world
 			matrix we move from camera to world vector, then normalize. This gives us the direction of our ray with the position being the camera's position. Once we can generate rays,
 			we can sample camera rays around a pixel to estimate the scene radience around the pixel. This sampling and averaging around the pixel is used to anti-alias, smoothing out any staircase effects
-			on the edges of triangles and spheres. 
+			on the edges of triangles and spheres.  </p>
 
-		Scene Intersection: To determine what a ray hits, we need to iterate through primitives like the triangle and sphere, checking if they intersection with the ray. To check the intersection,
+		<p>Scene Intersection: To determine what a ray hits, we need to iterate through primitives like the triangle and sphere, checking if they intersection with the ray. To check the intersection,
 			we must calculate the time at which the ray hits the surface, ensure t is within the rays range, if its valid then we set the max of the ray to the new t (making sure that future checks only
 			look for objects which are closer than the current hit), and lastly we record the intersection by keeping track of the normal vector, the material, and the hit time using the Intersection struct.
 			For triangle intersection in particular, we implemented Moller-Trumbore. This method essentially sets the ray equation (r(t) = origin + t * direction) equal to the barycentric equation of the triangle, which gives us 
-			t and u,v (the coordinates on the triangle's surface).
+			t and u,v (the coordinates on the triangle's surface).</p>
 			
 			
 		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
@@ -182,23 +182,15 @@
 <p>Next we check if there is any depth remaining. If r.depth <= 1 we have hit our recursion limit and return immediately, since there is nowhere left to bounce. </p>
 <p>If we do have depth remaining, we sample a new incoming direction using the BSDF at the hit surface via sample_f. This gives us a new direction w_in in object space along with its probability density pdf and the BSDF value. If the pdf is zero or negative we bail out early to avoid a degenerate division.</p>
 <p>This is where Russian Roulette comes in. We define a continuation probability cpdf = 0.65, meaning each bounce has a 65% chance of continuing. However, we always trace the very first indirect bounce unconditionally, which we track with the first_indirect flag by checking if we are still at max_ray_depth. For all subsequent bounces we flip a coin and terminate randomly if it fails. This gives us an unbiased estimator that can theoretically handle infinite bounces while still terminating in finite time. </p>
-</p>If we survive Russian Roulette, we construct a new bounce ray from hit_p in the sampled world space direction, setting min_t = EPS_F to avoid self-intersection and decrementing the depth by one. We then check if this bounce ray intersects anything in the scene via the BVH. If it does, we recursively call at_least_one_bounce_radiance on the new intersection to get the indirect radiance arriving from that direction. Finally we apply the full rendering equation weight — multiplying by the BSDF value, the cosine of the angle (w_in.z since we are in object space), dividing by the pdf, and dividing by cpdf to correct for the Russian Roulette termination probability, keeping the estimator unbiased. This weighted indirect radiance is accumulated into L_out and returned.</p>
+<p>If we survive Russian Roulette, we construct a new bounce ray from hit_p in the sampled world space direction, setting min_t = EPS_F to avoid self-intersection and decrementing the depth by one. We then check if this bounce ray intersects anything in the scene via the BVH. If it does, we recursively call at_least_one_bounce_radiance on the new intersection to get the indirect radiance arriving from that direction. Finally we apply the full rendering equation weight — multiplying by the BSDF value, the cosine of the angle (w_in.z since we are in object space), dividing by the pdf, and dividing by cpdf to correct for the Russian Roulette termination probability, keeping the estimator unbiased. This weighted indirect radiance is accumulated into L_out and returned.</p>
 		<h2>Part 5: Adaptive Sampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<h2>(Optional) Part 6: Extra Credit Opportunities</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<p>Adaptive sampling is a technique that avoids wasting samples on pixels that have already converged to a stable color. Instead of blindly shooting a fixed number of rays through every pixel, we concentrate samples in the harder parts of the image — like shadow boundaries and caustics — while stopping early on easy regions like flat walls or the ceiling.</p>
+<p>The implementation lives entirely in raytrace_pixel. It takes in a pixel coordinate x and y and works by maintaining two running statistics as it traces samples: s1, the sum of all illuminance values seen so far, and s2, the sum of their squares. These two numbers are all we need to compute the mean and variance at any point without storing every individual sample.</p>
+<p>For each sample we generate a random offset within the pixel using the grid sampler, scale it to the range [0,1] to get normalized image coordinates, and generate a camera ray. We set r.depth = max_ray_depth on the ray so the global illumination recursion has the correct depth budget. We then call est_radiance_global_illumination to get the radiance for that sample, accumulate it into our running sum, and convert it to a scalar illuminance via .illum() to update s1 and s2.</p>
+<p>Rather than checking convergence after every single sample, which would be expensive, we check every samplesPerBatch samples. At each check we compute the mean as μ = s1/n and the variance as σ² = (s2 - s1²/n) / (n-1), which is the standard one-pass variance formula that falls directly out of our two running totals. From the variance we compute I = 1.96 * σ / sqrt(n), which represents the half-width of a 95% confidence interval around the mean. Intuitively, I shrinks as either the variance decreases or the sample count grows — both of which indicate the pixel is converging. If I <= maxTolerance * μ, we consider the pixel converged and break out of the loop early. </p>
+<p>Finally we write the averaged color sum / samples_taken into the sample buffer and store the actual number of samples taken into sampleCountBuffer. That last part is important — by storing samples_taken rather than ns_aa, the renderer can generate the rate image showing red for pixels that needed many samples and blue for pixels that converged quickly, making it easy to see exactly where in the scene adaptive sampling is doing its work.</p>
 		
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+
 		</div>
 	</body>
 </html>
