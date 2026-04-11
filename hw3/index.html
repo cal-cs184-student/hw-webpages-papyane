@@ -28,25 +28,24 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 3 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Names: Elen Papyan </div>
 
 		<br>
 
 		Link to webpage: <a href="https://cal-cs184-student.github.io/hw-webpages-papyane/">WEBPAGE</a>
 		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/hw3-pathtracer-squid">REPO</a>
 		
-		<figure>
+		<!-- <figure>
 			<img src="cornell.png" alt="Cornell Boxes with Bunnies" style="width:70%"/>
 			<figcaption>You can add images with captions!</figcaption>
-		</figure>
+		</figure> -->
 
 		<!--
 		We've already added one heading per part, to make your write-up as navigable when grading. Please fit your write-up within these sections!
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
-
+This homework builds a complete path tracer from the ground up, implementing every layer of the rendering pipeline from raw ray generation all the way to physically accurate global illumination with adaptive sampling. The project begins by generating camera rays through each pixel, using Möller-Trumbore and sphere tests to find intersections. We build a BVH by recursively splitting primitives along the longest axis, accelerating renders from minutes to milliseconds. For light, we implement hemisphere sampling and importance sampling, which targets lights directly to eliminate noise. We expand this into global illumination using recursive bounces and Russian Roulette to simulate realistic color bleeding. Finally, adaptive sampling uses statistical confidence to stop sampling converged pixels early. Integrating these dependent layers reveals how tiny epsilon fixes ultimately create a physically accurate masterpiece.
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
 		<p>Ray Generation: We begin with a pixel coordinate in the image space then normalize it to be in the range [0,1]x[0,1]. Then within "generate_ray," we 
 			shift the points in order to place them in the center of the Field of View, before we scale them according to the field of view. Then using the camera to world
@@ -61,7 +60,6 @@
 			t and u,v (the coordinates on the triangle's surface).</p>
 			
 			
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -128,7 +126,7 @@
 
 <p>The importance sampling implementation similarly starts with a coordinate space setup but iterates through every individual light in the scene to sample them directly. For each light, we determine if it is a delta light to take either one sample or multiple area light samples, then call the light's sampling function to get the incoming radiance, world-space direction, distance, and a specific PDF. We convert the direction to object space to ensure the light is in front of the surface before casting a shadow ray that is capped at the distance to the light source. If the BVH confirms the path is not blocked, we calculate the contribution by weighting the radiance with the BSDF and the light's PDF. We accumulate these results for every light to produce a final radiance value that is significantly less noisy than the uniform method. </p>
 
-			Below we can also see that the higher light rays increase the noise levels decrease!
+			Below we can also see that the higher light rays make the the noise levels decrease!
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -303,14 +301,12 @@
 			  </tr>
 			</tr>
 				<tr>
+
 				<td style="text-align: center;">
-				  <img src="bunny_sam1028.png" width="400px"/>
-				  <figcaption></tr>
-				<tr>
-				<td style="text-align: center;">
-				  <img src="bunny_rr_4.png" width="400px"/>
-				  <figcaption>Bunny with 1028 sample per pixel</figcaption>
+				  <img src="bunny_sam1024.png" width="400px"/>
+				  <figcaption>Bunny with 1024 sample per pixel</figcaption>
 				</td>
+				</tr>
 			</table>
 		</div>
 			<h2>Part 5: Adaptive Sampling</h2>
