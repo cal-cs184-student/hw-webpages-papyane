@@ -270,6 +270,48 @@
 				</td>
 			  </tr>
 			</table>
+		<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="bunny_sam1.png" width="400px"/>
+				  <figcaption>Bunny with 1 sample per pixel</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bunny_sam2.png" width="400px"/>
+				  <figcaption>Bunny with 2 sample per pixel</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="bunny_sam4.png" width="400px"/>
+				  <figcaption>Bunny with 4 sample per pixel</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bunny_sam8.png" width="400px"/>
+				  <figcaption>Bunny with 8 sample per pixel</figcaption>
+				</td>
+			  </tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="bunny_sam16.png" width="400px"/>
+				  <figcaption>Bunny with 16 sample per pixel</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bunny_sam64.png" width="400px"/>
+				  <figcaption>Bunny with 64 sample per pixel</figcaption>
+				</td>
+			  </tr>
+			</tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="bunny_sam1028.png" width="400px"/>
+				  <figcaption></tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="bunny_rr_4.png" width="400px"/>
+				  <figcaption>Bunny with 1028 sample per pixel</figcaption>
+				</td>
+			</table>
 		</div>
 			<h2>Part 5: Adaptive Sampling</h2>
 <p>Adaptive sampling is a technique that avoids wasting samples on pixels that have already converged to a stable color. Instead of blindly shooting a fixed number of rays through every pixel, we concentrate samples in the harder parts of the image — like shadow boundaries and caustics — while stopping early on easy regions like flat walls or the ceiling.</p>
@@ -277,7 +319,29 @@
 <p>For each sample we generate a random offset within the pixel using the grid sampler, scale it to the range [0,1] to get normalized image coordinates, and generate a camera ray. We set r.depth = max_ray_depth on the ray so the global illumination recursion has the correct depth budget. We then call est_radiance_global_illumination to get the radiance for that sample, accumulate it into our running sum, and convert it to a scalar illuminance via .illum() to update s1 and s2.</p>
 <p>Rather than checking convergence after every single sample, which would be expensive, we check every samplesPerBatch samples. At each check we compute the mean as μ = s1/n and the variance as σ² = (s2 - s1²/n) / (n-1), which is the standard one-pass variance formula that falls directly out of our two running totals. From the variance we compute I = 1.96 * σ / sqrt(n), which represents the half-width of a 95% confidence interval around the mean. Intuitively, I shrinks as either the variance decreases or the sample count grows — both of which indicate the pixel is converging. If I <= maxTolerance * μ, we consider the pixel converged and break out of the loop early. </p>
 <p>Finally we write the averaged color sum / samples_taken into the sample buffer and store the actual number of samples taken into sampleCountBuffer. That last part is important — by storing samples_taken rather than ns_aa, the renderer can generate the rate image showing red for pixels that needed many samples and blue for pixels that converged quickly, making it easy to see exactly where in the scene adaptive sampling is doing its work.</p>
-		
+		<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="bunny_2048.png" width="400px"/>
+				  <figcaption>Bunny 2084 </figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bunny_2048_rate.png" width="400px"/>
+				  <figcaption>Bunny 2084 sampling rate</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="sphere2084.png" width="400px"/>
+				  <figcaption>Sphere 2084</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="spheres_rate.png" width="400px"/>
+				  <figcaption>Sphere 2084 sampling rate</figcaption>
+				</td>
+			  </tr>
+
+			</table>
 
 		</div>
 	</body>
