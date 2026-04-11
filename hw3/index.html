@@ -183,7 +183,63 @@
 <p>If we do have depth remaining, we sample a new incoming direction using the BSDF at the hit surface via sample_f. This gives us a new direction w_in in object space along with its probability density pdf and the BSDF value. If the pdf is zero or negative we bail out early to avoid a degenerate division.</p>
 <p>This is where Russian Roulette comes in. We define a continuation probability cpdf = 0.65, meaning each bounce has a 65% chance of continuing. However, we always trace the very first indirect bounce unconditionally, which we track with the first_indirect flag by checking if we are still at max_ray_depth. For all subsequent bounces we flip a coin and terminate randomly if it fails. This gives us an unbiased estimator that can theoretically handle infinite bounces while still terminating in finite time. </p>
 <p>If we survive Russian Roulette, we construct a new bounce ray from hit_p in the sampled world space direction, setting min_t = EPS_F to avoid self-intersection and decrementing the depth by one. We then check if this bounce ray intersects anything in the scene via the BVH. If it does, we recursively call at_least_one_bounce_radiance on the new intersection to get the indirect radiance arriving from that direction. Finally we apply the full rendering equation weight — multiplying by the BSDF value, the cosine of the angle (w_in.z since we are in object space), dividing by the pdf, and dividing by cpdf to correct for the Russian Roulette termination probability, keeping the estimator unbiased. This weighted indirect radiance is accumulated into L_out and returned.</p>
-		<h2>Part 5: Adaptive Sampling</h2>
+<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="blob.png" width="400px"/>
+				  <figcaption>Blob Global Illumination</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bench.png" width="400px"/>
+				  <figcaption>Bench Global Illumination</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="spheres.png" width="400px"/>
+				  <figcaption>Spheres Global Illumination</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="wall-e.png" width="400px"/>
+				  <figcaption>Wall-E Global Illumination</figcaption>
+				</td>
+			  </tr>
+			</table>
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="bunny_0_depth.png" width="400px"/>
+				  <figcaption>Bunny with 0th bounce of light</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bunny_1_depth.png" width="400px"/>
+				  <figcaption>Bunny with 1st bounce of light</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="bunny_2_depth.png" width="400px"/>
+				  <figcaption>Bunny with 2nd bounce of light</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bunny_3_depth.png" width="400px"/>
+				  <figcaption>Bunny with 3rd bounce of light</figcaption>
+				</td>
+			  </tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="bunny_4_depth.png" width="400px"/>
+				  <figcaption>Bunny with 4th bounce of light</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bunny_5_depth.png" width="400px"/>
+				  <figcaption>Bunny with 5th bounce of light</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+			<h2>Part 5: Adaptive Sampling</h2>
 <p>Adaptive sampling is a technique that avoids wasting samples on pixels that have already converged to a stable color. Instead of blindly shooting a fixed number of rays through every pixel, we concentrate samples in the harder parts of the image — like shadow boundaries and caustics — while stopping early on easy regions like flat walls or the ceiling.</p>
 <p>The implementation lives entirely in raytrace_pixel. It takes in a pixel coordinate x and y and works by maintaining two running statistics as it traces samples: s1, the sum of all illuminance values seen so far, and s2, the sum of their squares. These two numbers are all we need to compute the mean and variance at any point without storing every individual sample.</p>
 <p>For each sample we generate a random offset within the pixel using the grid sampler, scale it to the range [0,1] to get normalized image coordinates, and generate a camera ray. We set r.depth = max_ray_depth on the ray so the global illumination recursion has the correct depth budget. We then call est_radiance_global_illumination to get the radiance for that sample, accumulate it into our running sum, and convert it to a scalar illuminance via .illum() to update s1 and s2.</p>
